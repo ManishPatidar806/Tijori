@@ -2,7 +2,7 @@
 
 Tijori is a cross-platform expense tracker application featuring a Flutter-based frontend and a Java Spring Boot backend. The project is organized into two main components:
 
-- **Frontend**: A Flutter app supporting Android, iOS, Web, Windows, macOS, and Linux.
+- **Frontend**: A Flutter app supporting Android as well as iOS.
 - **Backend**: A Spring Boot application providing RESTful APIs for expense management.
 
 ---
@@ -13,10 +13,10 @@ The following diagram illustrates the high-level architecture of Tijori:
 
 ![System Architecture](Resources/ArchitectureDiagram.png)
 
-- **Frontend**: Communicates with the backend via REST APIs.
-- **Backend**: Handles business logic, data storage, and API endpoints.
-- **Database**: Stores user and expense data (configured in backend).
-
+- **User**: Interacts with the application through the Flutter-based frontend.
+- **Frontend**: Built with Flutter, it communicates with Firebase for OTP and SMS authentication, and interacts with the backend via REST APIs.
+- **Backend (Spring Boot)**: Handles authentication (via JWT filter chain), business logic (service layer), API endpoints (controller layer), and data access (DAO layer).
+- **Database (MySQL)**: Stores user and expense data, accessed by the backend.
 ---
 
 ## Sequence Diagram
@@ -25,11 +25,15 @@ Below is a typical sequence of operations for adding a new expense:
 
 ![Sequence Diagram](Resources/SequenceDiagram.png)
 
-1. User interacts with the Flutter app UI.
-2. The app sends a POST request to the backend API.
-3. The backend processes the request and stores the expense in the database.
-4. The backend responds with a success or error message.
-5. The app updates the UI accordingly.
+1. User opens the Flutter app.
+2. The app reads the latest SMS messages.
+3. The SMS Parser checks for bank transaction patterns in the messages.
+4. If a transaction is found, the app extracts transaction details (amount, date, merchant).
+5. The app sends a POST request with transaction data to the backend API.
+6. The backend validates and sanitizes the data, then stores the transaction in the SQL database.
+7. The backend computes the updated spending summary.
+8. If a spending goal threshold is crossed, a notification is sent via Firebase.
+9. The app updates the dashboard with the new data.
 
 ---
 
@@ -150,18 +154,8 @@ See [`Backend/pom.xml`](Backend/pom.xml) for details.
 
 ---
 
-## License
-
-This project is for educational purposes. See individual files for license information.
-
----
-
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ---
-
-## Contact
-
-For questions or support, please open an issue in this repository.
