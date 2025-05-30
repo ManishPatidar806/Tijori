@@ -150,7 +150,7 @@ See [`Backend/pom.xml`](Backend/pom.xml) for details.
 
 ## Screenshots
 
-![App Screenshot](Frontend/Screenshot_20250530_161220.png)
+![App Screenshot](Resources/Dashboard.png)
 
 ---
 
