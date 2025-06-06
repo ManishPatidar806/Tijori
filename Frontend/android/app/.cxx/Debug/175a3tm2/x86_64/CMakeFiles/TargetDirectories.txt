@@ -1,2 +1,0 @@
-/media/mohit/Projects/Tijori/Frontend/android/app/.cxx/Debug/175a3tm2/x86_64/CMakeFiles/edit_cache.dir
-/media/mohit/Projects/Tijori/Frontend/android/app/.cxx/Debug/175a3tm2/x86_64/CMakeFiles/rebuild_cache.dir
