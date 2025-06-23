@@ -2,7 +2,7 @@
 
 Tijori is a cross-platform expense tracker application featuring a Flutter-based frontend and a Java Spring Boot backend. The project is organized into two main components:
 
-- **Frontend**: A Flutter app supporting Android as well as iOS.
+- **Frontend**: A Flutter app that supports both Android and iOS..
 - **Backend**: A Spring Boot application providing RESTful APIs for expense management.
 
 ---
@@ -10,13 +10,11 @@ Tijori is a cross-platform expense tracker application featuring a Flutter-based
 
 ## Screenshots
 
-![App Screenshot](Resources/Dashboard.jpg),![App Screenshot](Resources/Register.jpg)
+## Screenshots
 
-![App Screenshot](Resources/Profile.jpg)
-![App Screenshot](Resources/Income.jpg)
+| ![Register](Resources/Register.jpg) | ![Dashboard](Resources/Dashboard.jpg) | ![Income](Resources/Income.jpg) | ![Profile](Resources/Profile.jpg) |
+|---|---|---|---|
 
-
-<img src="Resources/Register.jpg" width="300" style="margin: 10px;"/><img src="Resources/Dashboard.jpg" width="300" style="margin: 10px;"/> <img src="Resources/Income.jpg" width="300" style="margin: 10px;"/><img src="Resources/Profile.jpg" width="300" style="margin: 10px;"/> 
 ---
 
 ## System Architecture
@@ -25,7 +23,7 @@ The following diagram illustrates the high-level architecture of Tijori:
 
 ![System Architecture](Resources/ArchitectureDiagram.png)
 
-- **User**: Interacts with the application through the Flutter-based frontend.
+- **User**: Interacts with the application through the frontend.
 - **Frontend**: Built with Flutter, it communicates with Firebase for OTP and SMS authentication, and interacts with the backend via REST APIs.
 - **Backend (Spring Boot)**: Handles authentication (via JWT filter chain), business logic (service layer), API endpoints (controller layer), and data access (DAO layer).
 - **Database (MySQL)**: Stores user and expense data, accessed by the backend.
@@ -160,8 +158,6 @@ See [`Backend/pom.xml`](Backend/pom.xml) for details.
 
 ---
 
-## Contributing
+## License
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
----
+This project is licensed under the [MIT License](LICENSE).
