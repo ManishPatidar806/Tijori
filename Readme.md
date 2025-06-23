@@ -15,6 +15,11 @@ Tijori is a cross-platform expense tracker application featuring a Flutter-based
 
 ---
 
+### Demo
+https://youtu.be/wlA9ZibAPj8
+
+---
+
 ## System Architecture
 
 The following diagram illustrates the high-level architecture of Tijori:
