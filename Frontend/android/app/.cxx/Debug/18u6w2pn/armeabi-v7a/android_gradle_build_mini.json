@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/home/mohit/development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/mohit/Android/Sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/media/mohit/Projects/Tijori/expense-tracker/android/app/.cxx/Debug/18u6w2pn/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/mohit/Android/Sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/media/mohit/Projects/Tijori/expense-tracker/android/app/.cxx/Debug/18u6w2pn/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

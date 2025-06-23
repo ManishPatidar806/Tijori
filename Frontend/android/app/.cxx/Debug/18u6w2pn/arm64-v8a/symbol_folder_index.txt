@@ -1,0 +1,1 @@
+/media/mohit/Projects/Tijori/expense-tracker/build/app/intermediates/cxx/Debug/18u6w2pn/obj/arm64-v8a

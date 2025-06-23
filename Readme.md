@@ -7,6 +7,18 @@ Tijori is a cross-platform expense tracker application featuring a Flutter-based
 
 ---
 
+
+## Screenshots
+
+![App Screenshot](Resources/Dashboard.jpg),![App Screenshot](Resources/Register.jpg)
+
+![App Screenshot](Resources/Profile.jpg)
+![App Screenshot](Resources/Income.jpg)
+
+
+<img src="Resources/Register.jpg" width="300" style="margin: 10px;"/><img src="Resources/Dashboard.jpg" width="300" style="margin: 10px;"/> <img src="Resources/Income.jpg" width="300" style="margin: 10px;"/><img src="Resources/Profile.jpg" width="300" style="margin: 10px;"/> 
+---
+
 ## System Architecture
 
 The following diagram illustrates the high-level architecture of Tijori:
@@ -145,12 +157,6 @@ See [`Frontend/pubspec.yaml`](Frontend/pubspec.yaml) for the full list.
 - Maven
 
 See [`Backend/pom.xml`](Backend/pom.xml) for details.
-
----
-
-## Screenshots
-
-![App Screenshot](Resources/Dashboard.png)
 
 ---
 
