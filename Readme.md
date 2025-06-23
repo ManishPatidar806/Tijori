@@ -10,8 +10,6 @@ Tijori is a cross-platform expense tracker application featuring a Flutter-based
 
 ## Screenshots
 
-## Screenshots
-
 | ![Register](Resources/Register.jpg) | ![Dashboard](Resources/Dashboard.jpg) | ![Income](Resources/Income.jpg) | ![Profile](Resources/Profile.jpg) |
 |---|---|---|---|
 
