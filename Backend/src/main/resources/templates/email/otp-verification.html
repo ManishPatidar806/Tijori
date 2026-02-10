@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>OTP Verification</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: #f4f6f8;
+            color: #333333;
+            font-size: 14px;
+        }
+
+        .email-container {
+            max-width: 680px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 30px;
+            background-color: #9136a9;
+            color: #ffffff;
+        }
+
+        .header-table {
+            width: 100%;
+        }
+
+        .header-table td {
+            vertical-align: middle;
+        }
+
+        .header img {
+            height: 32px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .welcome-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #9136a9;
+            margin-bottom: 20px;
+        }
+
+        .main-content h1 {
+            font-size: 20px;
+            font-weight: 500;
+            margin: 0 0 20px;
+            color: #1f1f1f;
+        }
+
+        .message-text {
+            font-size: 15px;
+            margin: 10px 0;
+            color: #555555;
+        }
+
+        .otp-box {
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #f4f7ff;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .otp-code {
+            font-size: 36px;
+            font-weight: 600;
+            letter-spacing: 8px;
+            color: #9136a9;
+        }
+
+        .warning-text {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #777777;
+        }
+
+        /* Help Section */
+        .help-text {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #777777;
+        }
+
+        .help-text a {
+            color: #9136a9;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid #e6ebf1;
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 13px;
+            color: #777777;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        /* Responsive */
+        @media only screen and (max-width: 600px) {
+            .main-content {
+                padding: 30px 20px;
+            }
+
+            .otp-code {
+                font-size: 30px;
+                letter-spacing: 6px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="email-container">
+
+    <!-- Header -->
+    <div class="header">
+        <table class="header-table">
+            <tr>
+                <td>
+                    <img th:src="${logoUrl}" alt="Logo"/>
+                </td>
+                <td style="text-align: right;">
+                    <span th:text="${currentDateTime}">2026-02-10 10:00 AM</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Main -->
+    <div class="main-content">
+
+        <div class="welcome-title">
+            Welcome to <span th:text="${appName}">Tijori An Expense Tracker </span>
+        </div>
+
+        <h1>Email Verification Required</h1>
+
+        <p class="message-text">
+            Hey <strong th:text="${userName}">User</strong>,
+        </p>
+
+        <p class="message-text">
+            Use the One-Time Password (OTP) below to verify your email address.
+            This OTP is valid for
+            <strong th:text="${otpValidityMinutes} + ' minutes'">3 minutes</strong>.
+        </p>
+
+        <div class="otp-box">
+            <div class="otp-code" th:text="${otp}">123456</div>
+        </div>
+
+        <p class="warning-text">
+            For security reasons, please do not share this OTP with anyone.
+        </p>
+
+        <div class="help-text">
+            Need help?
+            <a th:href="${supportUrl}" target="_blank">Visit our website</a>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+
+        <p th:text="'Copyright © ' + ${currentYear} + ' ' + ${companyName} + '. All rights reserved.'">
+            Copyright © 2026 Tijori
+        </p>
+
+        <p th:text="${companyAddress}">
+            540 Jay Nagar, Pithampur, Madhya Pradesh
+        </p>
+
+        <p th:text="${companyName}">
+            Tijori An Expense Tracker
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>

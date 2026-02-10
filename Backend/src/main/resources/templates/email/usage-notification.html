@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <title>Usage Limit Notification</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: #f0f2f5;
+            font-size: 14px;
+            color: #333333;
+        }
+
+        .email-container {
+            max-width: 680px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        /* Top Accent */
+        .accent-bar {
+            height: 6px;
+            background-color: #9136a9;
+        }
+
+        /* Header */
+        .main-content {
+            text-align: center;
+            padding: 35px 30px 20px;
+        }
+
+        .main-content h1 {
+            font-size: 24px;
+            margin: 0;
+            color: #222222;
+        }
+
+        .subtitle {
+            margin-top: 8px;
+            font-size: 16px;
+            color: #666666;
+        }
+
+        /* Usage Card */
+        .usage-stats {
+            margin: 20px 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .usage-stats .amount {
+            font-size: 32px;
+            font-weight: 600;
+            color: #222222;
+        }
+
+        .usage-stats .label {
+            font-size: 14px;
+            color: #777777;
+            margin-top: 5px;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            background-color: #e0e0e0;
+            border-radius: 12px;
+            height: 18px;
+            margin: 25px 30px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 12px;
+        }
+
+        .progress-bar.normal {
+            background-color: #4caf50;
+        }
+
+        .progress-bar.warning {
+            background-color: #ff9800;
+        }
+
+        .progress-bar.danger {
+            background-color: #f44336;
+        }
+
+        /* Body */
+        .body-text {
+            padding: 10px 30px 30px;
+            color: #444444;
+        }
+
+        .body-text p {
+            font-size: 15px;
+            line-height: 1.6;
+            margin: 14px 0;
+        }
+
+        /* Support */
+        .support-text {
+            margin-top: 25px;
+            font-size: 14px;
+            color: #777777;
+            text-align: center;
+        }
+
+        .support-text a {
+            color: #9136a9;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 20px 30px;
+            background-color: #fafafa;
+            border-top: 1px solid #eeeeee;
+            text-align: center;
+            font-size: 12px;
+            color: #999999;
+        }
+
+        /* Responsive */
+        @media only screen and (max-width: 600px) {
+
+            .main-content {
+                padding: 25px 20px;
+            }
+
+            .usage-stats {
+                margin: 15px 20px;
+            }
+
+            .progress-bar-container {
+                margin: 20px;
+            }
+
+            .body-text {
+                padding: 10px 20px 25px;
+            }
+
+            .usage-stats .amount {
+                font-size: 26px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="email-container">
+
+    <!-- Accent -->
+    <div class="accent-bar"></div>
+
+
+    <!-- Header -->
+    <div class="main-content">
+
+        <h1>🚨 Usage Alert</h1>
+
+        <div class="subtitle">
+            You're nearing your usage limit
+        </div>
+
+    </div>
+
+
+    <!-- Usage Summary -->
+    <div class="usage-stats">
+
+        <div class="amount"
+             th:text="${#numbers.formatDecimal(usedAmount,1,2)} + ' / ' + ${#numbers.formatDecimal(totalAmount,1,2)}">
+
+            8500.00 / 10000.00
+
+        </div>
+
+        <div class="label"
+             th:text="${usagePercentage} + '% of your budget used'">
+
+            85% of your budget used
+
+        </div>
+
+    </div>
+
+
+    <!-- Progress Bar -->
+    <div class="progress-bar-container">
+
+        <div class="progress-bar"
+             th:classappend="${usagePercentage >= 90 ? ' danger' : (usagePercentage >= 75 ? ' warning' : ' normal')}"
+             th:style="'width:' + ${usagePercentage} + '%'">
+        </div>
+
+    </div>
+
+
+    <!-- Message -->
+    <div class="body-text">
+
+        <p>
+            Hi <strong th:text="${userName}">User</strong>,
+        </p>
+
+        <p>
+            You have used
+            <strong th:text="${#numbers.formatCurrency(usedAmount)}">$8,500.00</strong>
+            out of your allotted
+            <strong th:text="${#numbers.formatCurrency(totalAmount)}">$10,000.00</strong>.
+        </p>
+
+
+        <!-- Danger -->
+        <p th:if="${usagePercentage >= 90}"
+           style="color:#f44336; font-weight:500;">
+
+            ⚠️ You have exceeded 90% of your monthly budget. Please review your expenses.
+
+        </p>
+
+
+        <!-- Warning -->
+        <p th:if="${usagePercentage >= 75 and usagePercentage < 90}"
+           style="color:#ff9800; font-weight:500;">
+
+            ⚡ You're approaching your budget limit. Consider reducing non-essential expenses.
+
+        </p>
+
+
+        <!-- Support -->
+        <div class="support-text">
+
+            Need help?
+            <a th:href="'mailto:' + ${supportEmail}">
+                Contact Support
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Footer -->
+    <div class="footer">
+
+        <p th:text="'© ' + ${currentYear} + ' ' + ${companyName} + '. All rights reserved.'">
+            © 2026 Tijori An Expense Tracker. All rights reserved.
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>
