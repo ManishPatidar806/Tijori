@@ -1,6 +1,6 @@
 <div align="center">
 
-## 💰 Tijori – Personal Expense Tracker
+# 💰 Tijori – Personal Expense Tracker
 
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
