@@ -1,10 +1,28 @@
-# Tijori 💰
+<div align="center">
 
-**Tijori** (means "vault" in Hindi) is a personal expense tracking app that makes managing money easier. The app reads your bank SMS messages and automatically tracks your spending. No need to manually enter every transaction!
+## 💰 Tijori – Personal Expense Tracker
 
-Built with Flutter for mobile and Spring Boot for the backend - it's a complete full-stack project.
+[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Flutter](https://img.shields.io/badge/Flutter-3.x-blue.svg)](https://flutter.dev/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Demo](https://img.shields.io/badge/Demo-YouTube-red.svg)](https://youtu.be/wlA9ZibAPj8)
+
+**A modern, secure, and scalable expense management platform**
+
+</div>
+
 
 ---
+
+**Tijori** (means *"vault"* in Hindi) is a smart personal expense tracking app that makes managing money simple and efficient.  
+The app automatically reads bank SMS messages and processes them into structured financial records.
+
+Built with **Flutter** for the mobile application and **Spring Boot** for the backend, Tijori is a complete full-stack project designed with security, performance, and scalability in mind.
+
+---
+
+<div align="center">
 
 ## What This Project Does
 
