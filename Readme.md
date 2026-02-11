@@ -22,7 +22,7 @@ Built with **Flutter** for the mobile application and **Spring Boot** for the ba
 
 ---
 
-<div align="center">
+
 
 ## What This Project Does
 
