@@ -49,7 +49,7 @@ Tijori helps you track where your money goes by:
 ---
 
 ### Demo
-https://youtu.be/wlA9ZibAPj8
+[https://youtu.be/wlA9ZibAPj8](https://youtu.be/w_pCqVB7YEQ)
 
 ---
 
