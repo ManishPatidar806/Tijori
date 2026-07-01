@@ -506,7 +506,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 Built by **Manish Patidar**
 
-- Watch the demo: https://youtu.be/wlA9ZibAPj8
+- Watch the demo: https://youtu.be/w_pCqVB7YEQ
 - GitHub: https://github.com/ManishPatidar806
 - Report issues: https://github.com/ManishPatidar806/Tijori/issues
 
