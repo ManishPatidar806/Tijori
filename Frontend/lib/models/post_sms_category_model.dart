@@ -19,9 +19,9 @@ class CategorizedSmsData {
     return CategorizedSmsData(
       id: json['id'],
       amount: (json['amount'] as num).toDouble(),
-      refNo: json['refNo'],
-      category: json['category'],
-      moneyType: json['moneyType'],
+      refNo: json['refNo'] ?? json['referenceNumber'],
+      category: json['category'] ?? json['categoryType'],
+      moneyType: json['moneyType'] ?? json['transactionType'],
       dateTime: DateTime.parse(json['dateTime']),
     );
   }
@@ -30,9 +30,20 @@ class CategorizedSmsData {
     return {
       'id': id,
       'amount': amount,
-      'refNo': refNo,
+      'referenceNumber': refNo,
       'category': category?.toUpperCase(),
-      'moneyType': moneyType,
+      'transactionType': moneyType.toUpperCase(),
+      'dateTime': dateTime.toIso8601String(),
+    };
+  }
+
+  Map<String, dynamic> toBackendJson() {
+    return {
+      'id': id,
+      'amount': amount,
+      'referenceNumber': refNo,
+      'category': category?.toUpperCase(),
+      'transactionType': moneyType.toUpperCase(),
       'dateTime': dateTime.toIso8601String(),
     };
   }

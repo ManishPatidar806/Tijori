@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:new_minor/api/auth_api_client.dart';
+import 'package:new_minor/api/secure_helper_functions.dart';
 import 'package:new_minor/controllers/dashboard_controller.dart';
 import 'package:new_minor/pages/categorized_expanse_page.dart';
 import 'package:new_minor/pages/dashboard_page.dart';
@@ -56,8 +58,15 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           IconButton(
             icon: Icon(Icons.logout, size: 20.sp),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const RegistrationPage()));
+            onPressed: () async {
+              await AuthApiClient.logout();
+              if (!mounted) {
+                return;
+              }
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const RegistrationPage()),
+                (route) => false,
+              );
             },
           ),
         ],

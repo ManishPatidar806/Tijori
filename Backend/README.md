@@ -24,11 +24,11 @@
 
 - 🚀 **SMS Transaction Analysis**: Automatically parse and categorize bank SMS messages
 - 📊 **Category-based Budgeting**: Track expenses across multiple categories
-- 🔐 **JWT Authentication**: Secure token-based authentication system
+- 🔐 **JWT Authentication**: Short-lived access tokens with refresh-token rotation
 - 📧 **Email OTP Verification**: Two-factor authentication support
 - 📈 **Real-time Monitoring**: Integrated Spring Boot Admin dashboard
 - 🐳 **Dockerized Deployment**: Complete containerization with Docker Compose
-- ⚡ **Production-Ready**: Rate limiting, caching, health checks, and metrics
+- ⚡ **Production-Ready**: Rate limiting, Caffeine caching, health checks, and metrics
 - 🎯 **RESTful APIs**: Clean, documented API endpoints with OpenAPI/Swagger
 
 ---
@@ -44,7 +44,7 @@
 ### 👤 User Management
 - **User Registration & Login**: Mobile number-based authentication
 - **Profile Management**: User profile with customizable settings
-- **JWT Token Security**: Secure, stateless authentication
+- **JWT Token Security**: Access token + refresh token flow with cache-backed session tracking
 - **Email Verification**: OTP-based email validation
 
 ### 💳 Budget & Balance Tracking
@@ -66,6 +66,8 @@
 - **Request Logging**: Comprehensive request/response logging
 - **CORS Configuration**: Configurable cross-origin resource sharing
 - **Input Validation**: Robust validation with custom constraints
+
+The authentication flow uses a short-lived access token for API calls and a refresh token that is rotated and tracked in a Caffeine cache. When the access token expires, clients should call `POST /api/users/refresh` with the refresh token to receive a new token pair.
 
 ### 📊 Monitoring & Observability
 - **Spring Boot Admin**: Dedicated admin server for application monitoring
@@ -206,6 +208,8 @@ The application requires the following environment variables:
 | `DATABASE_USERNAME` | Database username | - | ✅ |
 | `DATABASE_PASSWORD` | Database password | - | ✅ |
 | `JWT_SECRET` | JWT signing secret (min 64 chars) | - | ✅ |
+| `JWT_ACCESS_EXPIRATION` | Access token lifetime in ms | `900000` | ❌ |
+| `JWT_REFRESH_EXPIRATION` | Refresh token lifetime in ms | `2592000000` | ❌ |
 | `MAIL_USERNAME` | SMTP email username | - | ✅ |
 | `MAIL_PASSWORD` | SMTP email password/app password | - | ✅ |
 | `CORS_ALLOWED_ORIGINS` | Allowed CORS origins (comma-separated) | `http://localhost:3000` | ❌ |
@@ -236,6 +240,13 @@ The application supports multiple profiles:
 - **`dev`**: Development mode with detailed logging
 - **`prod`**: Production mode with optimized settings
 - **`test`**: Testing mode with H2 in-memory database
+
+### Authentication Endpoints
+
+- `POST /api/users/signin` returns `accessToken`, `refreshToken`, `tokenType`, and `expiresIn`
+- `POST /api/users/signup` returns the same token pair after registration
+- `POST /api/users/refresh` rotates the refresh token and returns a new pair
+- `POST /api/users/logout` revokes the current refresh token session
 
 Activate a profile:
 ```bash

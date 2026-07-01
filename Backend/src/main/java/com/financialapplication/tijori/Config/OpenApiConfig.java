@@ -23,7 +23,7 @@ public class OpenApiConfig {
                         .version("0.0.1")
                         .description("RESTful API for personal finance management and expense tracking. " +
                                 "Built to help track expenses through SMS parsing and manual entry. " +
-                                "Includes JWT authentication, budget tracking, and monthly reports.")
+                                "Includes JWT access tokens, refresh-token rotation, budget tracking, and monthly reports.")
                         .contact(new Contact()
                                 .name("Manish Patidar")
                                 .email("manishpatidar306906@gmail.com"))

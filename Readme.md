@@ -60,7 +60,7 @@ The backend is built with Spring Boot 3.5 and uses several production-ready tool
 ### What Makes the Backend Good
 
 **Authentication & Security**
-- JWT tokens for secure login (no sessions needed)
+- Short-lived JWT access tokens with refresh-token rotation
 - Rate limiting to prevent API spam (using Bucket4j)
 - Spring Security with custom filters
 - CORS configuration for frontend access
@@ -74,7 +74,7 @@ The backend is built with Spring Boot 3.5 and uses several production-ready tool
 - Monthly expense reports
 
 **Performance Features**
-- Caffeine cache to speed up repeated queries
+- Caffeine cache to speed up repeated queries and store refresh-token sessions
 - HikariCP connection pool for database
 - Async email sending (doesn't block API calls)
 - Request/Response logging for debugging

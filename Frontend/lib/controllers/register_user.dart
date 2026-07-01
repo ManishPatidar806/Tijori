@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:new_minor/api/api_response_helper.dart';
+import 'package:new_minor/api/auth_api_client.dart';
 import 'package:new_minor/api/secure_helper_functions.dart';
 import '../api/api_urls.dart';
 import '../models/user.dart';
@@ -9,21 +10,31 @@ class ApiService {
 
   static Future<bool> registerUser(User user) async {
     final url = Uri.parse('$_baseUrl/api/users/signup');
-    final response = await http.post(
+    final response = await AuthApiClient.post(
       url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(user.toJson()),
+      authenticated: false,
+      body: user.toJson(),
     );
 
     print('Response $response');
     print(response.body);
 
-    if (response.statusCode == 201) {
-      final body = jsonDecode(response.body);
-      final token = body['token'];
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final dynamic payload = ApiResponseHelper.payload(body);
 
-      await SecureStorageHelper.saveToken(token);
-      print("Saved JWT token: $token");
+      if (payload is Map<String, dynamic>) {
+        final accessToken = payload['accessToken'] ?? payload['token'];
+        final refreshToken = payload['refreshToken'];
+
+        if (accessToken is String && refreshToken is String) {
+          await SecureStorageHelper.saveSession(
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          );
+          print("Saved token pair successfully");
+        }
+      }
 
       return true;
     } else if (response.statusCode == 409) {
@@ -34,7 +45,7 @@ class ApiService {
   }
 
   static Future<String?> fetchJwtToken() async {
-    final token = await SecureStorageHelper.getToken();
+    final token = await SecureStorageHelper.getAccessToken();
     if (token == null) {
       print("No JWT token found, user is not authenticated.");
     } else {

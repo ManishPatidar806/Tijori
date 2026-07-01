@@ -1,37 +1,25 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:new_minor/api/secure_helper_functions.dart';
+import 'package:new_minor/api/auth_api_client.dart';
 import '../api/api_urls.dart';
 import '../models/post_sms_category_model.dart';
 
 class CategoryTransactionController {
   static Future<List<CategorizedSmsData>> fetchTransactionsByCategory(String category) async {
-    final url = Uri.parse('${ApiUrls.baseURL}/api/sms/category?category=${category.toUpperCase()}');
-    final jwtToken = await SecureStorageHelper.getToken(); // Secure token fetch
-
-    if (jwtToken == null || jwtToken.isEmpty) {
-      print("JWT token not found.");
-      return [];
-    }
+    final url = Uri.parse('${ApiUrls.baseURL}/v1/api/transactions/category?category=${category.toUpperCase()}');
 
     try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': jwtToken,
-        },
-      );
+      final response = await AuthApiClient.get(url);
 
       if (response.statusCode == 200) {
-        final body = jsonDecode(response.body);
-        print("API Response Body: $body");
+        final body = jsonDecode(response.body) as Map<String, dynamic>;
+        final dynamic payload = body['data'] ?? body;
 
-        if (body.containsKey('smsList')) {
-          final List<dynamic> jsonData = body['smsList'];
-          return jsonData.map((item) => CategorizedSmsData.fromJson(item)).toList();
+        if (payload is List) {
+          return payload
+              .map((item) => CategorizedSmsData.fromJson(item as Map<String, dynamic>))
+              .toList();
         } else {
-          print("No 'smsList' field in the response");
+          print("No list found in ApiResponse.data");
         }
       } else {
         print("Failed to fetch transactions: ${response.statusCode}");

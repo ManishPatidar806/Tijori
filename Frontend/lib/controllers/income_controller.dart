@@ -1,31 +1,14 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:new_minor/api/auth_api_client.dart';
 import 'package:new_minor/api/api_urls.dart';
-import 'package:new_minor/api/secure_helper_functions.dart';
 import '../models/income.dart';
 
 
 class IncomeController {
   Future<bool> submitIncome(Income incomeData) async {
     final url = Uri.parse(
-      '${ApiUrls.baseURL}/api/amount/income?saving=${incomeData.targetSaving}&income=${incomeData.monthlyIncome}',
+      '${ApiUrls.baseURL}/v1/api/account-balance/income?saving=${incomeData.targetSaving}&income=${incomeData.monthlyIncome}',
     );
-
-    final jwtToken = await SecureStorageHelper.getToken(); // Use secure storage
-
-    if (jwtToken == null || jwtToken.isEmpty) {
-      print('JWT token not found.');
-      return false;
-    }
-
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': jwtToken,
-      },
-      body: jsonEncode(incomeData.toJson()),
-    );
+    final response = await AuthApiClient.post(url);
 
     if (response.statusCode == 200) {
       print("Income data submitted successfully.");

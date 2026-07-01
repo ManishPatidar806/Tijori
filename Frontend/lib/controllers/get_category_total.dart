@@ -1,32 +1,22 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:new_minor/api/secure_helper_functions.dart';
+import 'package:new_minor/api/auth_api_client.dart';
 import '../api/api_urls.dart';
 import '../models/total_expense_model.dart';
 
 class GetCategoryTotalsController {
   static Future<CategoryTotals?> fetchCategoryTotals() async {
-    final url = Uri.parse("${ApiUrls.baseURL}/api/categories/amount");
-    final jwtToken = await SecureStorageHelper.getToken(); 
-
-    if (jwtToken == null || jwtToken.isEmpty) {
-      print("JWT token not found.");
-      return null;
-    }
+    final url = Uri.parse("${ApiUrls.baseURL}/v1/api/category-budgets/amounts");
 
     try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': jwtToken,
-        },
-      );
+      final response = await AuthApiClient.get(url);
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        final Map<String, dynamic> categoryJson = data['category'];
-        return CategoryTotals.fromJson(categoryJson);
+        final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
+        final dynamic payload = data['data'] ?? data;
+        if (payload is List) {
+          return CategoryTotals.fromCategoryBudgets(payload);
+        }
+        print("Invalid category totals payload: expected a list.");
       } else {
         print("Failed to fetch category totals: ${response.statusCode}");
       }

@@ -7,12 +7,12 @@ import com.financialapplication.tijori.Exception.UserAlreadyExistException;
 import com.financialapplication.tijori.Exception.NotFoundException;
 import com.financialapplication.tijori.Model.DTO.UserProfileDto;
 import com.financialapplication.tijori.Model.Entity.User;
+import com.financialapplication.tijori.Model.Request.RefreshTokenRequest;
 import com.financialapplication.tijori.Model.Request.LoginRequest;
 import com.financialapplication.tijori.Model.Request.RegisterRequest;
 import com.financialapplication.tijori.Model.Response.ApiResponse;
 import com.financialapplication.tijori.Model.Response.AuthResponse;
 import com.financialapplication.tijori.Service.AuthService;
-import com.financialapplication.tijori.Util.JwtTokenProvider;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.Counter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,22 +28,19 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/v1/api/users")
+@RequestMapping("/api/users")
 @Tag(name = "Authentication", description = "User authentication and profile management APIs")
 public class AuthController {
     
     private final AuthService authService;
-    private final JwtTokenProvider jwtTokenProvider;
     private final Counter userRegistrationCounter;
     private final Counter userLoginCounter;
 
     public AuthController(
             AuthService authService, 
-            JwtTokenProvider jwtTokenProvider,
             Counter userRegistrationCounter,
             Counter userLoginCounter) {
         this.authService = authService;
-        this.jwtTokenProvider = jwtTokenProvider;
         this.userRegistrationCounter = userRegistrationCounter;
         this.userLoginCounter = userLoginCounter;
     }
@@ -64,12 +61,16 @@ public class AuthController {
         log.info("Processing registration request for mobile: {}", mobileNo);
 
         User user = authService.signUpUser(registerRequest);
-        String token = jwtTokenProvider.generateToken(user.getMobile(), user.getEmail());
+        var tokenPair = authService.issueTokens(user);
 
         AuthResponse authResponse = new AuthResponse();
         authResponse.setMessage("Registration successful. Welcome to the platform!");
         authResponse.setStatus(true);
-        authResponse.setToken(token);
+        authResponse.setToken(tokenPair.getAccessToken());
+        authResponse.setAccessToken(tokenPair.getAccessToken());
+        authResponse.setRefreshToken(tokenPair.getRefreshToken());
+        authResponse.setTokenType("Bearer");
+        authResponse.setExpiresIn(tokenPair.getExpiresIn());
         
         userRegistrationCounter.increment();
         log.info("User registered successfully: {}", user.getMobile());
@@ -96,12 +97,16 @@ public class AuthController {
         log.info("Processing login request for mobile: {}", mobile);
 
         User user = authService.loginUser(mobile);
-        String token = jwtTokenProvider.generateToken(user.getMobile(), user.getEmail());
+        var tokenPair = authService.issueTokens(user);
 
         AuthResponse authResponse = new AuthResponse();
         authResponse.setMessage("Login successful. Welcome back, " + user.getName() + "!");
         authResponse.setStatus(true);
-        authResponse.setToken(token);
+        authResponse.setToken(tokenPair.getAccessToken());
+        authResponse.setAccessToken(tokenPair.getAccessToken());
+        authResponse.setRefreshToken(tokenPair.getRefreshToken());
+        authResponse.setTokenType("Bearer");
+        authResponse.setExpiresIn(tokenPair.getExpiresIn());
         
         userLoginCounter.increment();
         log.info("User logged in successfully: {}", mobile);
@@ -111,6 +116,32 @@ public class AuthController {
                 HttpStatus.OK
         );
     }
+
+        @Operation(summary = "Refresh access token", description = "Exchanges a valid refresh token for a new token pair.")
+        @PostMapping("/refresh")
+        public ResponseEntity<ApiResponse<AuthResponse>> refreshToken(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest)
+                        throws NotFoundException, BusinessException {
+                var tokenPair = authService.refreshTokens(refreshTokenRequest.getRefreshToken());
+
+                AuthResponse authResponse = new AuthResponse();
+                authResponse.setMessage("Token refreshed successfully.");
+                authResponse.setStatus(true);
+                authResponse.setToken(tokenPair.getAccessToken());
+                authResponse.setAccessToken(tokenPair.getAccessToken());
+                authResponse.setRefreshToken(tokenPair.getRefreshToken());
+                authResponse.setTokenType("Bearer");
+                authResponse.setExpiresIn(tokenPair.getExpiresIn());
+
+                return new ResponseEntity<>(ApiResponse.success("Token refreshed successfully.", authResponse), HttpStatus.OK);
+        }
+
+        @Operation(summary = "Logout user", description = "Revokes the current refresh token session.")
+        @PostMapping("/logout")
+        public ResponseEntity<ApiResponse<Void>> logout(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest)
+                        throws NotFoundException, BusinessException {
+                authService.logout(refreshTokenRequest.getRefreshToken());
+                return new ResponseEntity<>(ApiResponse.success("Logged out successfully."), HttpStatus.OK);
+        }
 
     @Operation(summary = "Get user profile", description = "Retrieves the authenticated user's profile information")
     @ApiResponses(value = {

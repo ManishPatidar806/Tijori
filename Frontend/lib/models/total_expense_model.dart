@@ -44,6 +44,46 @@ class CategoryTotals {
     );
   }
 
+  factory CategoryTotals.fromCategoryBudgets(List<dynamic> budgets) {
+    final totals = <String, double>{
+      'GROCERIES': 0,
+      'MEDICAL': 0,
+      'DOMESTIC': 0,
+      'SHOPPING': 0,
+      'BILLS': 0,
+      'ENTERTAINMENT': 0,
+      'TRAVELLING': 0,
+      'FUELING': 0,
+      'EDUCATIONAL': 0,
+      'OTHERS': 0,
+    };
+
+    for (final item in budgets) {
+      if (item is Map<String, dynamic>) {
+        final category = (item['categoryType'] ?? item['category'])?.toString().toUpperCase();
+        final amount = (item['totalAmount'] ?? item['amount'] ?? 0).toDouble();
+        if (category != null && totals.containsKey(category)) {
+          totals[category] = amount;
+        }
+      }
+    }
+
+    return CategoryTotals(
+      id: 0,
+      groceries: totals['GROCERIES'] ?? 0,
+      medical: totals['MEDICAL'] ?? 0,
+      domestic: totals['DOMESTIC'] ?? 0,
+      shopping: totals['SHOPPING'] ?? 0,
+      bills: totals['BILLS'] ?? 0,
+      entertainment: totals['ENTERTAINMENT'] ?? 0,
+      travelling: totals['TRAVELLING'] ?? 0,
+      fueling: totals['FUELING'] ?? 0,
+      educational: totals['EDUCATIONAL'] ?? 0,
+      others: totals['OTHERS'] ?? 0,
+      datetime: DateTime.now(),
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

@@ -20,6 +20,15 @@ class SmsData {
     };
   }
 
+  Map<String, dynamic> toBackendJson() {
+    return {
+      'amount': amount,
+      'referenceNumber': refNo,
+      'transactionType': moneyType.toUpperCase(),
+      'dateTime': dateTime.toIso8601String(),
+    };
+  }
+
   factory SmsData.fromJson(Map<String, dynamic> json) {
     return SmsData(
       amount: double.tryParse(json['amount'].toString()) ?? 0.0,
@@ -35,7 +44,7 @@ class SmsPayload {
   SmsPayload({required this.sms});
   Map<String, dynamic> toJson() {
     return {
-      'sms': sms.map((e) => e.toJson()).toList(),
+      'transactions': sms.map((e) => e.toBackendJson()).toList(),
     };
   }
 }

@@ -20,15 +20,15 @@ public class SecurityConfig {
 
     // Public endpoints that don't require authentication
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/api/v1/users/signin",
-            "/api/v1/users/signup",
             "/api/users/signin",
             "/api/users/signup",
+            "/api/users/refresh",
+            "/api/users/logout",
             "/swagger-ui/index.html",
             "/swagger-ui/**",
             "/v3/api-docs/**",
-            "/api/emailVerification/sendOtp",
-            "/api/emailVerification/verifyOtp",
+            "/v1/api/emailVerification/sendOtp",
+            "/v1/api/emailVerification/verifyOtp",
             "/actuator/**"  // Allow all actuator endpoints for Spring Boot Admin monitoring for testing purpose we can secure them as well
     };
 

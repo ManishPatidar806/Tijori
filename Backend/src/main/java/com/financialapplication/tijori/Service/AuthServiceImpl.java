@@ -1,14 +1,17 @@
 package com.financialapplication.tijori.Service;
 
 import com.financialapplication.tijori.Config.CacheConfig;
+import com.financialapplication.tijori.Exception.BusinessException;
 import com.financialapplication.tijori.Exception.UserAlreadyExistException;
 import com.financialapplication.tijori.Exception.NotFoundException;
+import com.financialapplication.tijori.Model.DTO.TokenPairDto;
 import com.financialapplication.tijori.Model.DTO.UserProfileDto;
 import com.financialapplication.tijori.Model.Entity.AccountBalance;
 import com.financialapplication.tijori.Model.Entity.User;
 import com.financialapplication.tijori.Model.Request.RegisterRequest;
 import com.financialapplication.tijori.Repository.AccountBalanceRepository;
 import com.financialapplication.tijori.Repository.UserRepository;
+import com.financialapplication.tijori.Util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -26,6 +29,8 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final ModelMapper mapper;
     private final AccountBalanceRepository accountBalanceRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenStore refreshTokenStore;
 
     @Override
     @Transactional
@@ -58,6 +63,41 @@ public class AuthServiceImpl implements AuthService {
     public User loginUser(String mobileNo) throws NotFoundException {
         log.info("Attempting to log in user with mobile: {}", mobileNo);
         return findUserByMobile(mobileNo);
+    }
+
+    @Override
+    public TokenPairDto issueTokens(User user) {
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getMobile(), user.getEmail());
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getMobile());
+        refreshTokenStore.store(user.getMobile(), jwtTokenProvider.extractTokenId(refreshToken));
+        return new TokenPairDto(accessToken, refreshToken, jwtTokenProvider.getAccessExpirationMs());
+    }
+
+    @Override
+    public TokenPairDto refreshTokens(String refreshToken) throws NotFoundException, BusinessException {
+        if (!jwtTokenProvider.validateRefreshToken(refreshToken)) {
+            throw new BusinessException("Invalid or expired refresh token");
+        }
+
+        String mobileNo = jwtTokenProvider.extractMobile(refreshToken);
+        String tokenId = jwtTokenProvider.extractTokenId(refreshToken);
+
+        if (!refreshTokenStore.matches(mobileNo, tokenId)) {
+            throw new BusinessException("Refresh token has been revoked");
+        }
+
+        User user = findUserByMobile(mobileNo);
+        return issueTokens(user);
+    }
+
+    @Override
+    public void logout(String refreshToken) throws NotFoundException, BusinessException {
+        if (!jwtTokenProvider.validateRefreshToken(refreshToken)) {
+            throw new BusinessException("Invalid or expired refresh token");
+        }
+
+        String mobileNo = jwtTokenProvider.extractMobile(refreshToken);
+        refreshTokenStore.revoke(mobileNo);
     }
 
 

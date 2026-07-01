@@ -5,10 +5,10 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.concurrent.TimeUnit;
 
-// Tried Redis initially but local cache works fine for now
 @Configuration
 public class CacheConfig {
 
@@ -16,9 +16,10 @@ public class CacheConfig {
     public static final String CATEGORY_CACHE = "categoryBudgets";
     public static final String SMS_BY_CATEGORY_CACHE = "transactionsByCategory";
     public static final String EMAIL_OTP_CACHE = "email_otp_cache";
+        public static final String REFRESH_TOKEN_CACHE = "refreshTokens";
 
     @Bean
-    public CacheManager cacheManager() {
+        public CacheManager cacheManager(@Value("${jwt.refresh-expiration:2592000000}") long refreshExpirationMs) {
         CaffeineCacheManager manager = new CaffeineCacheManager();
 
         manager.registerCustomCache(USER_PROFILE_CACHE,
@@ -54,6 +55,14 @@ public class CacheConfig {
                         .initialCapacity(100)
                         .maximumSize(10_000)
                         .expireAfterWrite(5, TimeUnit.MINUTES)
+                        .build());
+
+        manager.registerCustomCache(REFRESH_TOKEN_CACHE,
+                Caffeine.newBuilder()
+                        .initialCapacity(100)
+                        .maximumSize(10_000)
+                        .expireAfterWrite(refreshExpirationMs, TimeUnit.MILLISECONDS)
+                        .recordStats()
                         .build());
 
         return manager;

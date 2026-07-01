@@ -3,6 +3,7 @@ package com.financialapplication.tijori.Service;
 import com.financialapplication.tijori.Exception.BusinessException;
 import com.financialapplication.tijori.Exception.UserAlreadyExistException;
 import com.financialapplication.tijori.Exception.NotFoundException;
+import com.financialapplication.tijori.Model.DTO.TokenPairDto;
 import com.financialapplication.tijori.Model.DTO.UserProfileDto;
 import com.financialapplication.tijori.Model.Entity.User;
 import com.financialapplication.tijori.Model.Request.RegisterRequest;
@@ -17,4 +18,10 @@ public interface AuthService {
     User loginUser(String mobile) throws BusinessException, NotFoundException;
 
     UserProfileDto getProfile(String mobileNo) throws NotFoundException;
+
+    TokenPairDto issueTokens(User user);
+
+    TokenPairDto refreshTokens(String refreshToken) throws NotFoundException, BusinessException;
+
+    void logout(String refreshToken) throws NotFoundException, BusinessException;
 }

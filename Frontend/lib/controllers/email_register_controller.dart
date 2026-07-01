@@ -1,25 +1,20 @@
-import 'package:http/http.dart' as http;
+import 'package:new_minor/api/api_response_helper.dart';
+import 'package:new_minor/api/auth_api_client.dart';
 import 'package:new_minor/api/api_urls.dart';
 
 class EmailOtpService {
   static Future<bool> sendOtpToEmail(String email) async {
     try {
-      final url = Uri.parse('${ApiUrls.baseURL}/api/emailVerification/sendOtp?email=$email');
+      final url = Uri.parse('${ApiUrls.baseURL}/v1/api/emailVerification/sendOtp?email=$email');
 
-      final response = await http.get(
-        url,
-        headers: {'Content-Type': 'application/json'},
-      );
+      final response = await AuthApiClient.get(url, authenticated: false);
 
       print('Send OTP - Status Code: ${response.statusCode}');
       print('Send OTP - Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        if (response.body.toLowerCase().contains("otp sent")) {
-          return true;
-        } else {
-          return false;
-        }
+        final body = jsonDecode(response.body) as Map<String, dynamic>;
+        return ApiResponseHelper.success(body);
       } else {
         throw Exception("Failed to send OTP: ${response.statusCode}");
       }
@@ -31,23 +26,16 @@ class EmailOtpService {
 
   static Future<bool> verifyEmailOtp(String email, String otp) async {
     try {
-      final url = Uri.parse('${ApiUrls.baseURL}/api/emailVerification/verifyOtp?email=$email&otp=$otp');
+      final url = Uri.parse('${ApiUrls.baseURL}/v1/api/emailVerification/verifyOtp?email=$email&otp=$otp');
 
-      final response = await http.get(
-        url,
-        headers: {'Content-Type': 'application/json'},
-      );
+      final response = await AuthApiClient.get(url, authenticated: false);
 
       print('Verify OTP - Status Code: ${response.statusCode}');
       print('Verify OTP - Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        if (response.body.toLowerCase().contains("otp verified") ||
-            response.body.toLowerCase().contains("verified")) {
-          return true;
-        } else {
-          return false;
-        }
+        final body = jsonDecode(response.body) as Map<String, dynamic>;
+        return ApiResponseHelper.success(body);
       } else {
         throw Exception("OTP Verification Failed: ${response.statusCode}");
       }

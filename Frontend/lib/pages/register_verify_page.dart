@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:new_minor/controllers/email_register_controller.dart';
 
 class RegisterVerifyPage extends StatefulWidget {
   final String mobileNumber;
@@ -16,41 +15,6 @@ class RegisterVerifyPage extends StatefulWidget {
 
   @override
   State<RegisterVerifyPage> createState() => _RegisterVerifyPageState();
-}
-
-class EmailVerificationRequest {
-  final String email;
-  final String? otp;
-
-  EmailVerificationRequest({
-    required this.email,
-    this.otp,
-  });
-
-  Map<String, dynamic> toJson() => {
-    'email': email,
-    if (otp != null) 'otp': otp,
-  };
-}
-
-class EmailVerificationResponse {
-  final bool success;
-  final String message;
-  final String? otp;
-
-  EmailVerificationResponse({
-    required this.success,
-    required this.message,
-    this.otp,
-  });
-
-  factory EmailVerificationResponse.fromJson(Map<String, dynamic> json) {
-    return EmailVerificationResponse(
-      success: json['success'] ?? false,
-      message: json['message'] ?? '',
-      otp: json['otp'],
-    );
-  }
 }
 
 class _RegisterVerifyPageState extends State<RegisterVerifyPage> {
@@ -67,8 +31,6 @@ class _RegisterVerifyPageState extends State<RegisterVerifyPage> {
   String? _mobileVerificationId;
   bool _isMobileOtpLoading = false;
   bool _isEmailOtpLoading = false;
-
-  static const String _baseUrl = 'https://your-backend-api.com'; // Replace with your API URL
 
   @override
   void initState() {
@@ -139,24 +101,13 @@ class _RegisterVerifyPageState extends State<RegisterVerifyPage> {
     });
 
     try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/api/send-email-otp'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(EmailVerificationRequest(email: widget.email).toJson()),
-      );
-
-      if (response.statusCode == 200) {
-        final verificationResponse =
-        EmailVerificationResponse.fromJson(jsonDecode(response.body));
-        if (verificationResponse.success) {
-          _showSnackBar('OTP sent to your email');
-          _startEmailCountdown();
-        } else {
-          _showSnackBar(verificationResponse.message);
-          setState(() => _isEmailOtpSent = false);
-        }
+      final sent = await EmailOtpService.sendOtpToEmail(widget.email);
+      if (sent) {
+        _showSnackBar('OTP sent to your email');
+        _startEmailCountdown();
       } else {
-        throw Exception('Failed to send OTP: ${response.statusCode}');
+        setState(() => _isEmailOtpSent = false);
+        _showSnackBar('Failed to send OTP');
       }
     } catch (e) {
       _showSnackBar('Failed to send OTP: $e');
@@ -203,25 +154,17 @@ class _RegisterVerifyPageState extends State<RegisterVerifyPage> {
     setState(() => _isEmailOtpLoading = true);
 
     try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/api/verify-email-otp'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(
-            EmailVerificationRequest(email: widget.email, otp: emailOtpController.text.trim()).toJson()),
+      final verified = await EmailOtpService.verifyEmailOtp(
+        widget.email,
+        emailOtpController.text.trim(),
       );
 
-      if (response.statusCode == 200) {
-        final verificationResponse =
-        EmailVerificationResponse.fromJson(jsonDecode(response.body));
-        if (verificationResponse.success) {
-          setState(() => _isEmailVerified = true);
-          _showSnackBar('Email verified successfully');
-          _checkVerificationComplete();
-        } else {
-          _showSnackBar(verificationResponse.message);
-        }
+      if (verified) {
+        setState(() => _isEmailVerified = true);
+        _showSnackBar('Email verified successfully');
+        _checkVerificationComplete();
       } else {
-        throw Exception('Failed to verify OTP: ${response.statusCode}');
+        _showSnackBar('Failed to verify OTP');
       }
     } catch (e) {
       _showSnackBar('Failed to verify OTP: $e');
